@@ -1,0 +1,41 @@
+# ==============================================================================
+# PROJECT: HYBRID-TRANSACTION-MONITORING-SYSTEM (TMS)
+# Target Audience: Compliance IT / DevOps / Financial Crime Unit (FCU)
+#
+# DESCRIPTION:
+# Defines the technical environment for the Global Sentinel Risk Orchestrator.
+# Dependencies cover: high-performance data processing, fuzzy identity resolution,
+# graph-based network analytics, and ML inference.
+#
+# INSTALLATION:
+#   pip install -r requirements.txt
+#
+# MAINTENANCE NOTE:
+# Versions are pinned to ensure deterministic results.
+# Changing ML libraries (XGBoost / Scikit-Learn) may alter risk scores,
+# requiring full model re-validation for compliance auditing.
+# ==============================================================================
+
+# --- 1. CORE DATA PROCESSING & NUMERICS ---
+pandas>=2.1.0              # Vectorized transaction processing (faster than loops)
+numpy>=1.24.0              # Array math for behavioral Z-Scores
+tqdm>=4.66.0               # Progress tracking for high-volume batch jobs
+
+# --- 2. CONFIGURATION & LOGGING ---
+PyYAML>=6.0.1              # Parse/manage tms_config.yaml governance file
+python-json-logger>=2.0.7  # Structured logs compatible with ELK/Splunk
+
+# --- 3. IDENTITY & FUZZY RESOLUTION ---
+rapidfuzz>=3.5.0           # High-performance fuzzy matching for KYC/Entity Linking
+
+# --- 4. NETWORK & GRAPH INTELLIGENCE ---
+networkx>=3.2.0            # Graph analytics (Fan-In/Fan-Out typologies)
+scipy>=1.11.0              # Statistical backend for anomaly detection
+
+# --- 5. MACHINE LEARNING SILOS (AI OVERLAY) ---
+xgboost>=2.0.0             # Supervised ML engine (trained on SAR patterns)
+scikit-learn>=1.3.0        # Isolation Forest (unsupervised anomaly detection)
+
+# --- 6. DATA UTILITIES & CACHING ---
+joblib>=1.3.0              # Model serialization/deserialization for fast inference
+faker>=19.0.0              # Synthetic data generation for UAT/Sandbox testing

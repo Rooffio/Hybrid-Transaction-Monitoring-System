@@ -1,0 +1,90 @@
+# ==============================================================================
+# TMS ADVANCED HYBRID ENGINE - UNIFIED CONFIGURATION
+# ==============================================================================
+# Target Audience: Compliance IT / Financial Crime Unit (FCU) Engineering
+# Purpose: Centralized Governance for Detection logic, ML weights, and Risk Bands.
+#
+# OPERATIONAL NOTE:
+# Changes to this file take effect on the next pipeline execution. No code
+# changes are required to tune the sensitivity of the transaction monitoring.
+# ==============================================================================
+
+# --- 1. GLOBAL ENGINE SETTINGS ---
+engine:
+  name: "TMS Hybrid Pipeline"
+  version: "2.5.0"
+  environment: "Production"
+  log_level: "INFO"  # Use 'DEBUG' for backtesting/tuning to see granular rule hits.
+  timezone: "UTC"
+
+# --- 2. IDENTITY RESOLUTION (ENTITY LINKING) ---
+# Controls how the system clusters disparate accounts into a single 'Global Entity'.
+entity_resolution:
+  fuzzy_threshold: 0.85          # [0.0 - 1.0] Lowering this increases "Synthetic Identity" detection.
+  use_national_id: true          # Exact matches on SSN/Tax ID override fuzzy name logic.
+  fuzzy_scorer: "token_sort_ratio" # Best for "Name Inversions" (e.g., 'John Doe' vs 'Doe John').
+
+# --- 3. RISK ORCHESTRATION & WEIGHTING ---
+# These weights govern the final 0-100 Normalized Risk Score.
+# TUNING IMPACT: Shifting weights changes the system's "philosophy".
+# - High Rule Weight: Conservative, predictable, audit-friendly.
+# - High Anomaly Weight: Innovative, catches "Unknown Unknowns" and new typologies.
+weights:
+  rule_weight: 0.45              # Primary influence: Deterministic Red Flags.
+  anomaly_weight: 0.30           # Secondary influence: Unsupervised ML Outliers.
+  supervised_weight: 0.25        # Tertiary influence: Historical SAR Pattern matching.
+  behavioral_bias: 0.10          # Optional 'kick' added to behavioral outliers.
+
+# --- 4. DETERMINISTIC DETECTION RULES ---
+# Adjusting these impact the "Volume" of alerts sent to investigators.
+rules:
+  # [R1-R2] Velocity & Liquidation
+  r1_velocity_limit: 5           # Max transactions per hour before flagging.
+  r2_drain_percent: 0.95         # Flag if >95% of balance is moved within 30 mins.
+  r2_drain_window_mins: 30
+
+  # [R5-R6] Structuring & Aggregation
+  # Designed to catch "Smurfing" below regulatory reporting limits.
+  r5_structuring_floor: 9000     # Scans for amounts just under the $10k limit.
+  r5_reporting_limit: 10000      # Standard CTR/Regulatory threshold.
+  r6_agg_txn_count: 5            # Number of txns to aggregate for threshold check.
+  r6_agg_total_amount: 10000     # Total sum over 24h that triggers aggregation flag.
+
+  # [R9-R10] Behavioral & New Relationships
+  r9_zscore_threshold: 3.0       # Sensitivity to spending spikes (Standard Deviations).
+  r10_new_counterparty_limit: 5000 # High-value limit for a user's first-ever txn to a recipient.
+
+  # [R12] Jurisdictional Risk
+  # High-risk country codes (ISO-2) for enhanced due diligence.
+  r12_high_risk_jurisdictions: ["IR", "KP", "MM", "NG", "KY", "VE", "RU"]
+
+  # [R14-R15] Network Typologies (Mules & Smurfing)
+  r14_fan_in_limit: 10           # "Mule" detection: Many senders to 1 recipient.
+  r15_fan_out_limit: 10          # "Disbursement" detection: 1 sender to many recipients.
+
+# --- 5. MACHINE LEARNING HYPERPARAMETERS ---
+ml_models:
+  # Unsupervised: Isolation Forest (Detects Statistical Anomalies)
+  unsupervised:
+    contamination: 0.01          # Assume 1% of the population is anomalous.
+    n_estimators: 200            # Forest density. Higher = more accurate but slower.
+
+  # Supervised: XGBoost (Detects matches to known historical SARs)
+  supervised:
+    learning_rate: 0.05          # Slower learning prevents over-fitting to old data.
+    max_depth: 6                 # Prevents the model from becoming too complex/uninterpretable.
+    target_label: "is_sar_filed"
+
+# --- 6. RISK PRIORITIZATION (BANDS) ---
+# Maps the final 0-100 score to a human-readable priority for the FCU desk.
+risk_bands:
+  critical: 85                   # Immediate Action Required (Score 85-100).
+  high: 65                       # Expedited Review (Score 65-84).
+  medium: 35                     # Standard Queue (Score 35-64).
+  low: 0                         # Monitoring only; no alert generated (Score 0-34).
+
+# --- 7. PERFORMANCE & SCALABILITY ---
+performance:
+  batch_size: 50000              # Number of records processed in a single RAM window.
+  use_multiprocessing: true      # Set to 'false' if running on low-core cloud instances.
+  graph_pruning_threshold: 1000  # Ignore txns below $1k in network cycle detection to save memory.
