@@ -222,6 +222,94 @@ Regulators (and internal Model Risk Management teams) often view Machine Learnin
 
 ---
 
+## 📊 TMS Advanced Hybrid Engine — Execution Log
+
+Below is a structured view of the system execution output, formatted for readability and reporting.
+
+---
+
+### 🚀 **System Initialization**
+
+```text
+2026-03-19 18:19:49,899 [INFO] ==========================================================
+2026-03-19 18:19:49,899 [INFO] STAGING: Initializing TMS Advanced Hybrid Engine...
+2026-03-19 18:19:49,899 [INFO] ==========================================================
+2026-03-19 18:19:49,914 [INFO] StateManager initialized. Monitoring watermark at: data/cache\last_run_metadata.json
+2026-03-19 18:19:49,914 [INFO] Entity Resolution initialized. Threshold Score: 85.0, Scorer: token_sort_ratio, Exact-ID Match Enabled: True
+2026-03-19 18:19:49,914 [INFO] Behavioral Engine initialized with 3.0σ threshold.
+2026-03-19 18:19:49,914 [INFO] Orchestrator Weights: Rules(0.45), Anomaly(0.3), Supervised(0.25)
+2026-03-19 18:19:49,914 [INFO] Transaction Rules Engine initialized. Structuring Floor: $9000, Velocity Multiplier: 2.0x, Monitored Jurisdictions: 7
+2026-03-19 18:19:49,914 [INFO] Complex Typologies Engine initialized. Fan-In Limit: 10, Fan-Out Limit: 10
+2026-03-19 18:19:49,914 [INFO] Behavioral Profiling Engine initialized. Threshold: 3.0σ, Min History: 3
+2026-03-19 18:19:49,914 [INFO] Graph Engine initialized. Pruning threshold: >10000, PageRank Limit: 5000 nodes.
+2026-03-19 18:19:49,914 [INFO] Anomaly Detector initialized. Mode: Batch-Relative. Contamination Target: 1.0%
+2026-03-19 18:19:49,914 [INFO] Supervised Engine initialized. Artifact Target: data/cache/xgboost_sar_model.joblib
+```
+
+---
+
+### 📥 **Data Ingestion & Entity Resolution**
+
+```text
+2026-03-19 18:19:51,649 [INFO] Delta identified: 100000 new records found. Previous watermark: 1970-01-01T00:00:00.
+2026-03-19 18:19:51,649 [INFO] PHASE 1: Resolving 100000 records into entity networks...
+2026-03-19 18:19:53,661 [INFO] Starting probabilistic matching for 22706 unique profiles...
+Resolving Identities: 100%|██████████| 22706/22706 [02:52<00:00, 131.46profile/s]
+2026-03-19 18:23:53,664 [INFO] Resolution complete. Linked 6334 account clusters. Unique Global Entities: 16372 (from 22706 accounts).
+2026-03-19 18:23:53,709 [INFO] Filtered graph universe: 24928 edges (Pruned from 100000 total).
+```
+
+---
+
+### 🔗 **Graph Analytics**
+
+```text
+2026-03-19 18:23:53,914 [INFO] Scanning top 1000 nodes for circular 'U-Turn' flows...
+2026-03-19 18:23:53,988 [INFO] Graph analytics complete. Nodes analyzed: 16829
+```
+
+---
+
+### 🧠 **Detection Engines Execution**
+
+```text
+2026-03-19 18:23:54,028 [INFO] PHASE 2: Executing Multi-Silo Detection Engines...
+2026-03-19 18:23:54,028 [INFO] Executing Transaction Rules Suite (Deterministic Pass)...
+2026-03-19 18:23:54,038 [INFO] Executing Complex Typology Analysis (Smurfing, U-Turns, Integration)...
+2026-03-19 18:23:54,390 [INFO] Analysis complete. Identified: 26 Smurfing Hubs, 0 Wash-Traders, 7073 Integration Events.
+2026-03-19 18:23:54,390 [INFO] Analyzing 100000 records for statistical outliers...
+2026-03-19 18:23:56,626 [INFO] Anomaly detection complete. Max Batch Score: 55.7
+2026-03-19 18:23:56,636 [INFO] Successfully loaded SAR prediction model from disk.
+2026-03-19 18:23:56,818 [INFO] Supervised scoring complete. Max Prob: 73.0
+```
+
+---
+
+### 📊 **Risk Scoring & Aggregation**
+
+```text
+2026-03-19 18:23:56,820 [INFO] PHASE 3: Orchestrating Hybrid Risk Scores & Prioritization...
+2026-03-19 18:23:56,865 [INFO] Generating entity-level baselines on: global_entity_id
+2026-03-19 18:23:57,012 [INFO] Aggregating 5 signals: ['network_raw', 'structuring_raw', 'velocity_raw', 'geo_raw', 'behavioral_raw']
+2026-03-19 18:23:57,062 [INFO] Risk aggregation complete. Max Risk Band: {'LOW': 68951, 'MEDIUM': 30994, 'HIGH': 55}
+```
+
+---
+
+### ✅ **Execution Summary**
+
+```text
+2026-03-19 18:24:00,899 [INFO] System state persisted. New Watermark: 2026-02-22T00:36:45
+2026-03-19 18:24:00,900 [INFO] ==========================================================
+2026-03-19 18:24:00,900 [INFO] BATCH SUCCESS: 100000 txns processed.
+2026-03-19 18:24:00,900 [INFO] ALERTS GENERATED: 55 High/Critical.
+2026-03-19 18:24:00,900 [INFO] TOTAL RUNTIME: 0:04:11.000006
+2026-03-19 18:24:00,900 [INFO] AUDIT TRAIL SAVED: data/processed/tms_batch_results_20260319_1823.csv
+2026-03-19 18:24:00,900 [INFO] ==========================================================
+```
+
+---
+
 ## 9\. Licensing & Contact
 
 Global Sentinel is released as an open-source framework to foster collaboration between **RegTech developers** and **Financial Crime Units**. By sharing core detection logic, we aim to standardize the "Hybrid Approach" to AML/CFT monitoring and reduce the global burden of financial crime.
