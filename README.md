@@ -242,9 +242,8 @@ This project is licensed under the **Apache License 2.0**.
 
 We welcome contributions from the community, especially regarding new **Complex Typology Rules** and **ML Model Architectures**.
 
-  * **Lead Architect:** [Rufus Muthusi Mutinda](https://github.com/YourUsername)
-  * **Organization:** [PraxiBotics](https://www.google.com/search?q=https://github.com/PraxiBotics) – *AI Automation & Compliance Engineering*
-  * **Location:** Nairobi, Kenya 🇰🇪
+  * **Lead Architect:** [Rufus Mutinda](https://github.com/Rooffio)
+  * **Organization:** [PraxiBotics](https://www.praxibotics.lovable.app) – *AI Automation & Compliance Engineering*
   * **Inquiries:** For professional consultation, custom rule integration, or enterprise support, please reach out via GitHub Issues or LinkedIn.
 
 -----
